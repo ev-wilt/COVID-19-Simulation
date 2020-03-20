@@ -11,7 +11,6 @@ pub enum Direction {
 pub struct Wall {
     plane: Plane<f32>,
     position: Isometry2<f32>,
-    direction: Direction
 }
 
 impl Wall {
@@ -38,8 +37,7 @@ impl Wall {
         }
         Self {
             plane: Plane::new(normal),
-            position: position,
-            direction: direction
+            position: position
         }
     }
 

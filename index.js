@@ -4,8 +4,8 @@ import * as PIXI from 'pixi.js';
 const healthyColor = 0xadd8e6;
 const sickColor = 0xba6d20;
 const recoveredColor = 0xa885cc;
-const appWidth = 500;
-const appHeight = 500;
+const appWidth = 400;
+const appHeight = 400;
 
 rust.then(m => {
     const app = new PIXI.Application({
@@ -16,7 +16,7 @@ rust.then(m => {
         antialias: true
     });
     app.stage.interactive = true;
-    const simulation = new m.Simulation(appWidth, appHeight);
+    let simulation = new m.Simulation(appWidth, appHeight);
     let viewContainer = document.createElement("div");
     const graphics = new PIXI.Graphics();
     app.stage.addChild(graphics);
@@ -26,6 +26,12 @@ rust.then(m => {
 
     viewContainer.appendChild(app.view);
     document.body.appendChild(viewContainer);
+
+    const newSimButton = document.getElementById("newSim");
+    newSimButton.addEventListener("click", event => {
+        simulation = new m.Simulation(appWidth, appHeight);
+    });
+      
 
     function render() {
         graphics.clear();
@@ -49,8 +55,14 @@ rust.then(m => {
         app.ticker.add((delta) => {
             simulation.update();
             render()
+
+            // Update counters
+            document.getElementById("sickCount").innerHTML = simulation.get_sick_total();
+            document.getElementById("healthyCount").innerHTML = simulation.get_healthy_total();
+            document.getElementById("recoveredCount").innerHTML = simulation.get_recovered_total();
         });        
     }
 
     update();
 });
+

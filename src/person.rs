@@ -42,7 +42,7 @@ pub struct Person {
 
 impl Person {
     pub fn new(x: f32, y: f32) -> Self {
-        let radius = 2.0;
+        let radius = 3.0;
         let mut velocity_x: f32 = (random() as f32 - 0.25) / (0.75 - 0.25);
         let mut velocity_y: f32 = 1.0 - velocity_x;
         velocity_x = (-random() as i8) as f32 + velocity_x;
@@ -57,6 +57,10 @@ impl Person {
 
     pub fn get_position(&self) -> Isometry2<f32> {
         Isometry2::new(Vector2::new(self.get_x(), self.get_y()), na::zero())
+    }
+
+    pub fn get_next_position(&self) -> Isometry2<f32> {
+        Isometry2::new(Vector2::new(self.get_x(), self.get_y()) + self.velocity, na::zero())
     }
 
     pub fn get_serializable_data(&self) -> SerializablePerson {

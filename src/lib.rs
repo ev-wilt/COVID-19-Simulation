@@ -13,7 +13,9 @@ use person::*;
 use wall::*;
 use js_sys::Math::random;
 use ncollide2d::query;
-use nalgebra::{Vector2, Isometry2, Matrix};
+use nalgebra::Matrix;
+
+const total_people: u16 = 100;
 
 #[wasm_bindgen]
 extern "C" {
@@ -25,7 +27,10 @@ extern "C" {
 pub struct Simulation {
     people: Vec<Person>,
     updated_people: Vec<Box<SerializablePerson>>,
-    walls: [Wall; 4]
+    walls: [Wall; 4],
+    sick_total: u16,
+    healthy_total: u16,
+    recovered_total: u16,
 }
 
 #[wasm_bindgen]
@@ -59,7 +64,10 @@ impl Simulation {
         Self {
             people: people,
             updated_people: updated_people,
-            walls: planes
+            walls: planes,
+            sick_total: 1,
+            healthy_total: total_people - 1,
+            recovered_total: 0
         }
     }
 
@@ -67,8 +75,23 @@ impl Simulation {
         JsValue::from_serde(&self.updated_people).unwrap()
     }
 
+    pub fn get_sick_total(&self) -> JsValue {
+        JsValue::from_f64(self.sick_total as f64)
+    }
+
+    pub fn get_healthy_total(&self) -> JsValue {
+        JsValue::from_f64(self.healthy_total as f64)
+    }
+
+    pub fn get_recovered_total(&self) -> JsValue {
+        JsValue::from_f64(self.recovered_total as f64)
+    }
+
     pub fn update(&mut self) -> Result<(), JsValue> {
         self.updated_people.clear();
+        self.recovered_total = 0;
+        self.healthy_total = 0;
+        self.sick_total = 0;
 
         for i in 0..self.people.len() {
             let (people_l, people_r) = self.people.split_at_mut(i);
@@ -79,6 +102,13 @@ impl Simulation {
             let last_status = person.get_status();
 
             person.update();
+
+            // Update totals
+            match person.get_status() {
+                Status::Healthy => self.healthy_total += 1,
+                Status::Sick => self.sick_total += 1,
+                Status::Recovered => self.recovered_total += 1
+            }
 
             // Check wall collisions
             let person_position = person.get_position();
@@ -103,7 +133,7 @@ impl Simulation {
                     }
                     let normal = contact.unwrap().normal;
                     person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &normal) * *normal);
-                    other_person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &normal) * *normal);
+                    other_person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &-normal) * *-normal);
                 }
             }
 

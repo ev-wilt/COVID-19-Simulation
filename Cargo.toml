@@ -1,0 +1,40 @@
+[package]
+name = "covid_sim"
+version = "0.1.0"
+authors = ["Evan Wilt"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+console_error_panic_hook = "0.1.6"
+js-sys = "0.3.36"
+ncollide2d = "0.22.0"
+nalgebra = "0.20.0"
+serde_derive = "1.0.104"
+rand_core = "0.5.1"
+
+[dependencies.serde]
+version = "1.0.104"
+features = ["rc"]
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+    'Document',
+    'Element',
+    'EventTarget',
+    'HtmlCanvasElement',
+    'MouseEvent',
+    'WebGlBuffer',
+    'WebGlProgram',
+    'WebGlRenderingContext',
+    'WebGlShader',
+    'WebGlUniformLocation',
+    'Window',
+]
+
+[dependencies.wasm-bindgen]
+version = "0.2.59"
+features = ["serde-serialize"]

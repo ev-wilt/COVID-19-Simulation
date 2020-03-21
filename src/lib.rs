@@ -14,8 +14,9 @@ use wall::*;
 use js_sys::Math::random;
 use ncollide2d::query;
 use nalgebra::Matrix;
+use nalgebra::Vector2;
 
-const total_people: u16 = 100;
+const TOTAL_PEOPLE: u16 = 50;
 
 #[wasm_bindgen]
 extern "C" {
@@ -36,16 +37,35 @@ pub struct Simulation {
 #[wasm_bindgen]
 impl Simulation {
     #[wasm_bindgen(constructor)]
-    pub fn new(width: f64, height: f64) -> Self {
-
+    pub fn new(width: f64, height: f64, sim_type: &str, percentage: f64) -> Self {
+        
         // Generate people
         let mut people = Vec::new();
-        for _ in 0..50 {
+        for i in 0..TOTAL_PEOPLE {
             let x = random() as f32 * (width as f32 - 10.0) + 5.0;
             let y = random() as f32 * (height as f32 - 10.0) + 5.0;
-            people.push(Person::new(x, y));
+            let mut velocity_x: f32 = (random() as f32 - 0.25) / (0.75 - 0.25);
+            let mut velocity_y: f32 = 1.0 - velocity_x;
+            velocity_x = (-random() as i8) as f32 + velocity_x;
+            velocity_y = (-random() as i8) as f32 + velocity_y;
+
+            if sim_type == "freeForAll" {
+                people.push(Person::new(x, y, false, Vector2::new(velocity_x, velocity_y)));
+            }
+            else if sim_type == "distancing" {
+                let distancing_total = (TOTAL_PEOPLE as f64 * (percentage / 100.0)) as u16;
+                if i < distancing_total {
+                    people.push(Person::new(x, y, true, Vector2::new(0.0, 0.0)));
+                }
+                else {
+                    people.push(Person::new(x, y, false, Vector2::new(velocity_x, velocity_y)));
+                }
+            }
+            else {
+                log("unsupported sim type");
+            }
         }
-        people[0].set_status(Status::Sick);
+        people[(TOTAL_PEOPLE - 1) as usize].set_status(Status::Sick);
 
         let mut updated_people: Vec<Box<SerializablePerson>> = Vec::new();
         people
@@ -66,7 +86,7 @@ impl Simulation {
             updated_people: updated_people,
             walls: planes,
             sick_total: 1,
-            healthy_total: total_people - 1,
+            healthy_total: TOTAL_PEOPLE - 1,
             recovered_total: 0
         }
     }
@@ -142,10 +162,7 @@ impl Simulation {
             }
 
             // Only update if the person has changed
-            let has_changed = last_x != person.get_x() || last_y != person.get_y() || last_status != person.get_status();
-            if has_changed {
-                self.updated_people.push(Box::new(person.get_serializable_data()));
-            }
+            self.updated_people.push(Box::new(person.get_serializable_data()));
         }
 
         Ok(())

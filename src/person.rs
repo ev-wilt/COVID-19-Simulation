@@ -1,7 +1,8 @@
 use ncollide2d::shape::Ball;
 use nalgebra::{Vector2, Isometry2};
-use js_sys::Math::random;
 use js_sys::Date;
+
+const SICKNESS_DURATION: f64 = 7000.0;
 
 #[derive(Serialize)]
 #[derive(Clone)]
@@ -36,31 +37,25 @@ pub struct Person {
     serializable_data: SerializablePerson,
     velocity: Vector2<f32>,
     ball: Ball<f32>,
-    sick_time: Option<f64>
+    sick_time: Option<f64>,
+    is_distancing: bool
 }
 
 
 impl Person {
-    pub fn new(x: f32, y: f32) -> Self {
-        let radius = 4.0;
-        let mut velocity_x: f32 = (random() as f32 - 0.25) / (0.75 - 0.25);
-        let mut velocity_y: f32 = 1.0 - velocity_x;
-        velocity_x = (-random() as i8) as f32 + velocity_x;
-        velocity_y = (-random() as i8) as f32 + velocity_y;
+    pub fn new(x: f32, y: f32, is_distancing: bool, velocity: Vector2<f32>) -> Self {
+        let radius = 4.5;
         Self {
             serializable_data: SerializablePerson::new(x, y),
-            velocity: Vector2::new(velocity_x, velocity_y),
+            velocity: velocity,
             ball: Ball::new(radius),
-            sick_time: None
+            sick_time: None,
+            is_distancing: is_distancing
         }
     }
 
     pub fn get_position(&self) -> Isometry2<f32> {
         Isometry2::new(Vector2::new(self.get_x(), self.get_y()), na::zero())
-    }
-
-    pub fn get_next_position(&self) -> Isometry2<f32> {
-        Isometry2::new(Vector2::new(self.get_x(), self.get_y()) + self.velocity, na::zero())
     }
 
     pub fn get_serializable_data(&self) -> SerializablePerson {
@@ -108,7 +103,7 @@ impl Person {
 
     pub fn update(&mut self) {
         // Update status
-        if self.sick_time.is_some() && (self.sick_time.unwrap() + 7000.0) < Date::now() {
+        if self.sick_time.is_some() && (self.sick_time.unwrap() + SICKNESS_DURATION) < Date::now() {
             self.sick_time = None;
             self.serializable_data.status = Status::Recovered;
         }

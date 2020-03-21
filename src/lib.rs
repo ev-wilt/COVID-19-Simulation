@@ -116,14 +116,16 @@ impl Simulation {
                 let contact = query::contact(&wall.get_position(), wall.get_plane(), &person_position, person.get_ball(), 1.0);
                 if contact.is_some() {
                     let normal = contact.unwrap().normal;
-                    person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &normal) * *normal)
+                    if Matrix::dot(&person.get_velocity(), &normal) < 0.0 {
+                        person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &normal) * *normal);
+                    }
                 }
             }
             
             // Check collisions with other people
             let other_people = [people_l, people_r].concat();
             for mut other_person in other_people {
-                let contact = query::contact(&other_person.get_position(), other_person.get_ball(), &person_position, person.get_ball(), 1.0);
+                let contact = query::contact(&other_person.get_position(), other_person.get_ball(), &person_position, person.get_ball(), 0.0);
                 if contact.is_some() {
                     if person.get_status() == Status::Sick && other_person.get_status() == Status::Healthy {
                         other_person.set_status(Status::Sick);
@@ -132,8 +134,10 @@ impl Simulation {
                         person.set_status(Status::Sick);
                     }
                     let normal = contact.unwrap().normal;
-                    person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &normal) * *normal);
-                    other_person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &-normal) * *-normal);
+                    if Matrix::dot(&person.get_velocity(), &normal) < 0.0 {
+                        person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &normal) * *normal);
+                        other_person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &-normal) * *-normal);    
+                    }
                 }
             }
 

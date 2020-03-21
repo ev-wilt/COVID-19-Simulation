@@ -7,6 +7,11 @@ const recoveredColor = 0xa885cc;
 const appWidth = 400;
 const appHeight = 400;
 
+function initChart() {
+    let ctx = document.getElementById('statusChart').getContext('2d');
+
+}
+
 rust.then(m => {
     const app = new PIXI.Application({
         width: appWidth, 
@@ -15,7 +20,6 @@ rust.then(m => {
         resolution: window.devicePixelRatio || 1,
         antialias: true
     });
-    app.stage.interactive = true;
     let simulation = new m.Simulation(appWidth, appHeight);
     let viewContainer = document.createElement("div");
     const graphics = new PIXI.Graphics();
@@ -31,7 +35,6 @@ rust.then(m => {
     newSimButton.addEventListener("click", event => {
         simulation = new m.Simulation(appWidth, appHeight);
     });
-      
 
     function render() {
         graphics.clear();

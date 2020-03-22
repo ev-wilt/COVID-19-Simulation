@@ -158,7 +158,7 @@ rust.then(m => {
         app.ticker.add((delta) => {
             simulation.update();
             render();
-            if (Date.now() - lastUpdateTime > chartUpdateTimeMilli && simulation.get_recovered_total() < totalPeople - 5) {
+            if (Date.now() - lastUpdateTime > chartUpdateTimeMilli && simulation.get_sick_total() !== 0) {
                 updateChart(Date.now() - lastUpdateTime);
                 lastUpdateTime = Date.now();
             }

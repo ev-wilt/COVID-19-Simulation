@@ -4,7 +4,7 @@
         <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     </head>
 
-    <body style="background-color: white; margin: 0; overflow: hidden;">
+    <body style="background-color: white; margin: 0;">
         <div style="text-align: center;">
             <h1>COVID-19 Simulator</h1>
             <h3>Sick</h3>
@@ -14,9 +14,7 @@
             <h3>Recovered</h3>
             <p id="recoveredCount"></p>
         </div>
-        <!-- <div style="text-align: center;">
-            <canvas id="statusChart" width="400" height="200"></canvas>
-        </div> -->
+
         <div id="simSettings" style="text-align: center;">
             <input type="radio" name="simType" value="freeForAll" checked>Free-for-all<br>
             <input type="radio" name="simType" value="distancing">Distancing<br>
@@ -26,6 +24,9 @@
                 <input type="text" id="percentage" value="50" hidden>
             </div>
             <button id="newSim" style="margin: 10px;">New Simulation</button>
+        </div>
+        <div id="chart">
+            <canvas style="display: block; margin: 0 auto;"id="statusChart" width="500" height="200"></canvas>
         </div>
         <script src="index.js"></script>
     </body>

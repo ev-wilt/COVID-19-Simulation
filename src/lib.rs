@@ -117,10 +117,6 @@ impl Simulation {
             let (people_l, people_r) = self.people.split_at_mut(i);
             let (person, people_r) = people_r.split_at_mut(1);
             let person = &mut person[0];
-            let last_x = person.get_x();
-            let last_y = person.get_y();
-            let last_status = person.get_status();
-
             person.update();
 
             // Update totals

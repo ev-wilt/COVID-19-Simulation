@@ -16,7 +16,8 @@ use ncollide2d::query;
 use nalgebra::Matrix;
 use nalgebra::Vector2;
 
-const TOTAL_PEOPLE: u16 = 50;
+const TOTAL_PEOPLE: u16 = 75;
+const VELOCITY_SCALE: f32 = 0.5;
 
 #[wasm_bindgen]
 extern "C" {
@@ -58,7 +59,7 @@ impl Simulation {
                     people.push(Person::new(x, y, true, Vector2::new(0.0, 0.0)));
                 }
                 else {
-                    people.push(Person::new(x, y, false, Vector2::new(velocity_x, velocity_y)));
+                    people.push(Person::new(x, y, false, Vector2::new(velocity_x * VELOCITY_SCALE, velocity_y * VELOCITY_SCALE)));
                 }
             }
             else {
@@ -146,7 +147,7 @@ impl Simulation {
                     if person.get_status() == Status::Sick && other_person.get_status() == Status::Healthy {
                         other_person.set_status(Status::Sick);
                     }
-                    if person.get_status() == Status::Healthy && other_person.get_status() == Status::Sick {
+                    else if person.get_status() == Status::Healthy && other_person.get_status() == Status::Sick {
                         person.set_status(Status::Sick);
                     }
                     let normal = contact.unwrap().normal;

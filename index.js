@@ -5,10 +5,10 @@ const Chart = require('chart.js');
 const healthyColor = 0xadd8e6;
 const sickColor = 0xba6d20;
 const recoveredColor = 0xa885cc;
-const appWidth = 400;
+const appWidth = 600;
 const appHeight = 300;
 const chartUpdateTimeMilli = 500;
-const totalPeople = 50;
+const totalPeople = 75;
 
 let simType = 'freeForAll';
 

@@ -1,33 +1,74 @@
 <!DOCTYPE html>
+<style>
+.footer {
+    position:fixed;
+    left:0px;
+    bottom:0px;
+    height:30px;
+    width: 100%;
+    background-color: #a3834b;
+    color: white;
+    text-align: center;
+}
+ul {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+li {
+    display: block;
+    flex: 0 1 auto;
+    list-style-type: none;
+}
+p {
+    font-size: large;
+}
+</style>
 <html>
     <head>
         <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     </head>
 
-    <body style="background-color: white; margin: 0;">
-        <div style="text-align: center;">
-            <h1>COVID-19 Simulator</h1>
-            <h3>Sick</h3>
-            <p id="sickCount"></p>
-            <h3>Healthy</h3>
-            <p id="healthyCount"></p>
-            <h3>Recovered</h3>
-            <p id="recoveredCount"></p>
+    <body style="background-color: wheat; margin: 0; font-family: 'Courier New', Courier, monospace; margin: 40px;">
+        <div>
+            <h1 style="text-align: center;">COVID-19 Simulator</h1>
+            <ul>
+                <li></li>
+                <li>
+                    <h3>Sick</h3>
+                    <p id="sickCount"></p>
+                </li>
+                <li>
+                    <h3>Healthy</h3>
+                    <p id="healthyCount"></p>        
+                </li>
+                <li>
+                    <h3>Recovered</h3>
+                    <p id="recoveredCount"></p>        
+                </li>
+                <li></li>
+            </ul>
         </div>
 
         <div id="simSettings" style="text-align: center;">
+            <h3>Simulation Type</h3>
             <input type="radio" name="simType" value="freeForAll" checked>Free-for-all<br>
             <input type="radio" name="simType" value="distancing">Distancing<br>
-            <!-- <input type="radio" name="simType" value="quarantine">Quarantine<br> -->
-            <div style="margin: 10px;">
-                <label for="percentage" id="percentageLabel" hidden>Percentage of people distancing:</label><br>
-                <input type="text" id="percentage" value="50" hidden>
+            <div>
+                <label style="margin: 5px;" for="percentage" id="percentageLabel" hidden>Percentage of people distancing:</label><br>
+                <input style="margin: 5px;" type="number" id="percentage" min="0" max="100" value="50" hidden>
             </div>
             <button id="newSim" style="margin: 10px;">New Simulation</button>
         </div>
-        <div id="chart" style="margin: 10px;">
-            <canvas style="display: block; margin: 0 auto;"id="statusChart" width="500" height="200"></canvas>
+        <div id="chart" style="margin: 15px;">
+            <canvas style="display: block; margin: 0 auto;"id="statusChart" width="600" height="250"></canvas>
         </div>
+        <div class="footer">
+            <p style="margin: 5px;">©2020 Evan Wilt</p>
+        </div>          
         <script src="index.js"></script>
     </body>
 </html>

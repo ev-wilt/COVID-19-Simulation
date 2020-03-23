@@ -16,7 +16,7 @@ use ncollide2d::query;
 use nalgebra::Matrix;
 use nalgebra::Vector2;
 
-const TOTAL_PEOPLE: u16 = 25;
+const TOTAL_PEOPLE: u16 = 75;
 const VELOCITY_SCALE: f32 = 1.0;
 
 #[wasm_bindgen]

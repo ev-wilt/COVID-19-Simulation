@@ -16,8 +16,8 @@ use ncollide2d::query;
 use nalgebra::Matrix;
 use nalgebra::Vector2;
 
-const TOTAL_PEOPLE: u16 = 75;
-const VELOCITY_SCALE: f32 = 0.5;
+const TOTAL_PEOPLE: u16 = 25;
+const VELOCITY_SCALE: f32 = 1.0;
 
 #[wasm_bindgen]
 extern "C" {
@@ -51,7 +51,7 @@ impl Simulation {
             velocity_y = (-random() as i8) as f32 + velocity_y;
 
             if sim_type == "freeForAll" {
-                people.push(Person::new(x, y, false, Vector2::new(velocity_x, velocity_y)));
+                people.push(Person::new(x, y, false, Vector2::new(velocity_x * VELOCITY_SCALE, velocity_y * VELOCITY_SCALE)));
             }
             else if sim_type == "distancing" {
                 let distancing_total = (TOTAL_PEOPLE as f64 * (percentage / 100.0)) as u16;
@@ -108,7 +108,7 @@ impl Simulation {
         JsValue::from_f64(self.recovered_total as f64)
     }
 
-    pub fn update(&mut self) -> Result<(), JsValue> {
+    pub fn update(&mut self, delta: f64) -> Result<(), JsValue> {
         self.updated_people.clear();
         self.recovered_total = 0;
         self.healthy_total = 0;
@@ -118,7 +118,7 @@ impl Simulation {
             let (people_l, people_r) = self.people.split_at_mut(i);
             let (person, people_r) = people_r.split_at_mut(1);
             let person = &mut person[0];
-            person.update();
+            person.update(delta);
 
             // Update totals
             match person.get_status() {
@@ -152,8 +152,8 @@ impl Simulation {
                     }
                     let normal = contact.unwrap().normal;
                     if Matrix::dot(&person.get_velocity(), &normal) < 0.0 {
-                        person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &normal) * *normal);
-                        other_person.set_velocity(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &-normal) * *-normal);    
+                        person.set_velocity(Matrix::normalize(&(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &normal) * *normal)) * VELOCITY_SCALE);
+                        other_person.set_velocity(Matrix::normalize(&(person.get_velocity() - 2.0 * Matrix::dot(&person.get_velocity(), &-normal) * *-normal)) * VELOCITY_SCALE);    
                     }
                 }
             }

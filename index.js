@@ -7,7 +7,7 @@ const sickColor = 0xba6d20;
 const recoveredColor = 0xa885cc;
 const appWidth = 600;
 const appHeight = 300;
-const chartUpdateTimeMilli = 500;
+const chartUpdateTimeMilli = 350;
 const totalPeople = 75;
 
 let simType = 'freeForAll';
@@ -56,10 +56,16 @@ function initChart() {
                     ticks: {
                         max: totalPeople,
                         display: false
+                    },
+                    gridLines: {
+                        display: false
                     }
                 }],
                 xAxes: [{
                     ticks: {
+                        display: false
+                    },
+                    gridLines: {
                         display: false
                     }
                 }]
@@ -156,7 +162,7 @@ rust.then(m => {
 
     function update() {
         app.ticker.add((delta) => {
-            simulation.update();
+            simulation.update(delta);
             render();
             if (Date.now() - lastUpdateTime > chartUpdateTimeMilli && simulation.get_sick_total() !== 0) {
                 updateChart(Date.now() - lastUpdateTime);

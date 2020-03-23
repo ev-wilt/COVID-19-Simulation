@@ -1,8 +1,7 @@
 use ncollide2d::shape::Ball;
 use nalgebra::{Vector2, Isometry2};
-use js_sys::Date;
 
-const SICKNESS_DURATION: f64 = 7000.0;
+const SICKNESS_DURATION: f64 = 450.0;
 
 #[derive(Serialize)]
 #[derive(Clone)]
@@ -92,7 +91,7 @@ impl Person {
 
     pub fn set_status(&mut self, status: Status) {
         if status == Status::Sick {
-            self.sick_time = Some(Date::now());
+            self.sick_time = Some(0.0);
         }
         self.serializable_data.status = status;
     }
@@ -101,15 +100,19 @@ impl Person {
         self.serializable_data.status
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, delta: f64) {
         // Update status
-        if self.sick_time.is_some() && (self.sick_time.unwrap() + SICKNESS_DURATION) < Date::now() {
-            self.sick_time = None;
-            self.serializable_data.status = Status::Recovered;
+        if self.sick_time.is_some() {
+            self.sick_time = Some(self.sick_time.unwrap() + delta);
+            if self.sick_time.unwrap() > SICKNESS_DURATION {
+                self.sick_time = None;
+                self.serializable_data.status = Status::Recovered;
+            }
         }
 
         // Update position
-        self.set_x(self.get_x() + self.velocity.x);
-        self.set_y(self.get_y() + self.velocity.y);
+        self.set_x(self.get_x() + self.velocity.x * delta as f32);
+        self.set_y(self.get_y() + self.velocity.y * delta as f32);
+
     }
 }

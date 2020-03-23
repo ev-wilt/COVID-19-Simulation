@@ -5,10 +5,10 @@ const Chart = require('chart.js');
 const healthyColor = 0xadd8e6;
 const sickColor = 0xba6d20;
 const recoveredColor = 0xa885cc;
-const appWidth = 600;
-const appHeight = 300;
+const appWidth = 400;
+const appHeight = 400;
 const chartUpdateTimeMilli = 350;
-const totalPeople = 75;
+const totalPeople = 100;
 
 let simType = 'freeForAll';
 
@@ -147,7 +147,7 @@ rust.then(m => {
             else if (person.status === 'Recovered') {
                 graphics.beginFill(recoveredColor, 1);
             }
-            graphics.drawCircle(person.x, person.y, 5);
+            graphics.drawCircle(person.x, person.y, 4.25);
             graphics.endFill();
         })
     }

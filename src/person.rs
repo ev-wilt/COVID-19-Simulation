@@ -43,7 +43,7 @@ pub struct Person {
 
 impl Person {
     pub fn new(x: f32, y: f32, is_distancing: bool, velocity: Vector2<f32>) -> Self {
-        let radius = 4.5;
+        let radius = 3.75;
         Self {
             serializable_data: SerializablePerson::new(x, y),
             velocity: velocity,
